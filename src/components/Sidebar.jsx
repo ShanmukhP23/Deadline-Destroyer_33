@@ -8,8 +8,10 @@ import {
     HiOutlineChartBar,
     HiOutlineMenu,
     HiOutlineX,
+    HiOutlineLogout,
 } from 'react-icons/hi';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuth } from '../context/AuthContext';
 import './Sidebar.css';
 
 const navItems = [
@@ -23,6 +25,7 @@ const navItems = [
 export default function Sidebar() {
     const [mobileOpen, setMobileOpen] = useState(false);
     const location = useLocation();
+    const { user, logout } = useAuth();
 
     return (
         <>
@@ -100,10 +103,25 @@ export default function Sidebar() {
                 </nav>
 
                 <div className="sidebar-footer">
-                    <div className="sidebar-footer-card">
-                        <p className="sidebar-footer-text">🧠 Keep learning!</p>
-                        <p className="sidebar-footer-sub">Consistency is the key to retention.</p>
-                    </div>
+                    {/* User profile section */}
+                    {user && (
+                        <div className="sidebar-user-card">
+                            <div className="sidebar-user-avatar">
+                                {user.avatar || user.name?.charAt(0)?.toUpperCase() || '?'}
+                            </div>
+                            <div className="sidebar-user-info">
+                                <span className="sidebar-user-name">{user.name}</span>
+                                <span className="sidebar-user-email">{user.email}</span>
+                            </div>
+                            <button
+                                className="sidebar-logout-btn"
+                                onClick={logout}
+                                title="Sign out"
+                            >
+                                <HiOutlineLogout />
+                            </button>
+                        </div>
+                    )}
                 </div>
             </aside>
         </>

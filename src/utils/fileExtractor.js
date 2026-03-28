@@ -1,7 +1,9 @@
 import * as pdfjsLib from 'pdfjs-dist';
+import pdfjsWorkerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 
-// Set up the PDF.js worker from CDN
-pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
+// Set up the PDF.js worker from the locally installed package
+pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorkerUrl;
+
 
 /**
  * Extract text content from a PDF file.
