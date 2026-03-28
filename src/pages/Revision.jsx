@@ -19,6 +19,7 @@ import {
 import { summarizeTopic } from '../utils/geminiService';
 import SuccessAnimation from '../components/SuccessAnimation';
 import FlashcardMode from '../components/FlashcardMode';
+import TestMode from '../components/TestMode';
 
 const container = {
     hidden: { opacity: 0 },
@@ -35,6 +36,7 @@ export default function Revision() {
     const navigate = useNavigate();
     const [showSuccess, setShowSuccess] = useState(false);
     const [showFlashcards, setShowFlashcards] = useState(false);
+    const [showTest, setShowTest] = useState(false);
 
     const selectedTopicId = location.state?.topicId;
     const [selectedId, setSelectedId] = useState(selectedTopicId || null);
@@ -80,6 +82,17 @@ export default function Revision() {
                 <FlashcardMode
                     topics={selectedTopic ? [selectedTopic] : dueTopics.length > 0 ? dueTopics : topics}
                     onClose={() => setShowFlashcards(false)}
+                />
+            </div>
+        );
+    }
+
+    if (showTest && selectedTopic) {
+        return (
+            <div>
+                <TestMode
+                    topic={selectedTopic}
+                    onClose={() => setShowTest(false)}
                 />
             </div>
         );
@@ -132,6 +145,12 @@ export default function Revision() {
                             </div>
 
                             <div style={{ display: 'flex', gap: '8px' }}>
+                                <button
+                                    className="btn btn-ghost btn-sm"
+                                    onClick={() => setShowTest(true)}
+                                >
+                                    📝 Take Test
+                                </button>
                                 <button
                                     className="btn btn-ghost btn-sm"
                                     onClick={() => setShowFlashcards(true)}

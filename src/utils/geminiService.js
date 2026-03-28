@@ -98,7 +98,51 @@ Keep it short and punchy — this is for quick revision, not a textbook.`;
     return result;
 }
 
-// ─── 2. Analyze learning pace ────────────────────
+// ─── 2. Generate MCQ Test ──────────────────────────
+export async function generateMCQTest(title, description) {
+    if (!description || description.trim().length < 50) {
+        throw new Error('Not enough notes to generate a quiz. Please add more description.');
+    }
+
+    const prompt = `You are a strict but fair teacher generating a 5-question multiple-choice quiz on the topic "${title}".
+
+Here are the student's study notes:
+"""
+${description.slice(0, 4000)}
+"""
+
+Based ONLY on the provided notes (do not invent external facts), generate 5 multiple-choice questions. 
+Each question should test core understanding, not just trivia. Ensure answers are explicitly or implicitly found in the notes.
+If the notes are too short to create 5 distinct questions, make the questions as varied as possible.
+
+Return the result in EXACTLY this JSON format (no markdown code blocks, just raw JSON array):
+[
+  {
+    "question": "The question text",
+    "options": ["Option A", "Option B", "Option C", "Option D"],
+    "correctAnswer": 1
+  }
+]
+- "correctAnswer" should be the zero-based index of the correct option in the "options" array.
+- Make exactly 5 questions.
+- Provide precisely 4 options per question.`;
+
+    const raw = await callGemini(prompt);
+    
+    try {
+        let cleaned = raw.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
+        const parsed = JSON.parse(cleaned);
+        if (!Array.isArray(parsed) || parsed.length !== 5) {
+            throw new Error('Invalid JSON structure returned');
+        }
+        return parsed;
+    } catch (err) {
+        console.error('Failed to parse MCQ JSON:', err, raw);
+        throw new Error('Failed to generate test. Please try again.');
+    }
+}
+
+// ─── 3. Analyze learning pace ────────────────────
 export async function analyzeLearningPace(topics) {
     if (!topics || topics.length === 0) {
         return {
@@ -147,6 +191,19 @@ export async function analyzeLearningPace(topics) {
         });
     });
 
+    // Average test scores
+    let totalScore = 0;
+    let totalTests = 0;
+    topics.forEach(t => {
+        if (t.testScores && t.testScores.length > 0) {
+            t.testScores.forEach(scoreObj => {
+                totalScore += scoreObj.score;
+                totalTests++;
+            });
+        }
+    });
+    const avgScorePct = totalTests > 0 ? Math.round((totalScore / (totalTests * 5)) * 100) : null;
+
     const topicSummary = topics
         .sort((a, b) => (a.revisionCount || 0) - (b.revisionCount || 0))
         .slice(0, 8)
@@ -163,6 +220,7 @@ Here is the student's data:
 - Topics overdue: ${overdueTopics.length}
 - Topics due today: ${dueToday.length}
 - Days active in last 7 days: ${last7Days.size}/7
+- Recent quiz average: ${avgScorePct !== null ? avgScorePct + '% (out of 100)' : 'No tests taken yet'}
 
 Topic details (sorted by weakest first):
 ${topicSummary}
@@ -172,14 +230,14 @@ Based on this data, respond in EXACTLY this JSON format (no markdown fences):
   "pace": "crushing|steady|slipping|new",
   "emoji": "<one emoji>",
   "label": "<2-3 word label>",
-  "message": "<2-3 sentence personalized motivational message with specific advice based on the data. Reference actual topic names if any are overdue.>",
+  "message": "<2-3 sentence personalized motivational message with specific advice based on the data. Reference actual topic names if any are overdue. Address quiz scores if they exist.>",
   "priorities": ["<topic name 1>", "<topic name 2>", "<topic name 3>"]
 }
 
 Rules:
-- "crushing": active 5+ days, few overdue, strong topics growing
+- "crushing": active 5+ days, few overdue, strong topics growing OR high quiz average (80%+)
 - "steady": active 3-4 days, some progress
-- "slipping": many overdue, inactive days, weak topics piling up
+- "slipping": many overdue, inactive days, weak topics piling up OR low quiz average (< 50%) despite revisions
 - "new": fewer than 3 total revisions
 - priorities = the 3 topics most in need of revision (weakest/overdue first)
 - Keep the message warm but direct. Be specific.`;

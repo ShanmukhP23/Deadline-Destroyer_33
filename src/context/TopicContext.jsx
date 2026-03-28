@@ -43,6 +43,7 @@ function createTopicReducer(userId) {
                     revisionCount: 0,
                     nextRevisionDate: getNextRevisionDate(0, now),
                     revisions: [],
+                    testScores: [],
                 };
                 newState = [...state, topic];
                 break;
@@ -58,6 +59,22 @@ function createTopicReducer(userId) {
                             revisionCount: newCount,
                             nextRevisionDate: getNextRevisionDate(newCount, now),
                             revisions: [...(topic.revisions || []), now.toISOString()],
+                        };
+                    }
+                    return topic;
+                });
+                break;
+            }
+
+            case 'ADD_TEST_SCORE': {
+                newState = state.map((topic) => {
+                    if (topic.id === action.payload.id) {
+                        return {
+                            ...topic,
+                            testScores: [
+                                ...(topic.testScores || []),
+                                { score: action.payload.score, date: new Date().toISOString() }
+                            ]
                         };
                     }
                     return topic;
@@ -120,8 +137,12 @@ export function TopicProvider({ children, userId }) {
         dispatch({ type: 'UPDATE_TOPIC', payload: { id, updates } });
     };
 
+    const addTestScore = (id, score) => {
+        dispatch({ type: 'ADD_TEST_SCORE', payload: { id, score } });
+    };
+
     return (
-        <TopicContext.Provider value={{ topics, addTopic, markRevised, deleteTopic, updateTopic }}>
+        <TopicContext.Provider value={{ topics, addTopic, markRevised, deleteTopic, updateTopic, addTestScore }}>
             {children}
         </TopicContext.Provider>
     );

@@ -16,16 +16,18 @@ Say goodbye to forgetting important concepts and hello to a structured, data-dri
 
 ### 🤖 Google Gemini AI Integration
 RecallX acts as your personal study companion using the powerful `gemini-2.0-flash` model:
-* **AI Learning Coach (Dashboard)**: Analyzes your revision history, streak data, and overdue topics to detect your 'learning pace' (e.g., 🚀 Crushing It, ⚠️ Falling Behind). It delivers highly personalized tactical advice and prioritizes what you should study next.
+* **AI Learning Coach (Dashboard)**: Analyzes your revision history, streak data, overdue topics, and **test scores** to detect your 'learning pace' (e.g., 🚀 Crushing It, ⚠️ Slipping). It delivers highly personalized tactical advice and prioritizes what you should study next.
 * **✨ AI Topic Summary (Revision)**: Need a quick refresher? Click the AI Summary button on any detailed topic to generate concise, bulleted recaps featuring **Key Concepts**, **Things to Remember**, and **Study Tips**.
+* **📝 AI Quiz Generator**: Dynamically generate a 5-question multiple-choice test based *only* on the notes of a specific topic to test your knowledge. Scores are saved and fed back to the AI Coach.
 
 ### 🗓️ Spaced Repetition Engine
 * **Dynamic Scheduling**: Automatically calculates optimal intervals (1, 2, 5, 10, 20, 30 days) to revise topics just as you are about to forget them.
 * **Retention Tracking**: Topics are graded as **Weak**, **Medium**, or **Strong** based on the number of successful revisions.
 * **At-Risk Alerts**: The dashboard flags topics that are overdue or slipping from memory.
 
-### 🎴 Smart Flashcards & Active Recall
+### 🎴 Smart Flashcards, Testing & Active Recall
 * **Distraction-Free Mode**: Focused flip-card UI for testing yourself on concepts without glancing at the answers too early.
+* **Interactive MCQ Tests**: Take AI-generated 5-question tests directly from the revision page with real-time grading.
 * **Quick Actions**: Mark topics as "Done" instantly or deep-dive into the revision history.
 
 ### 📄 Document & Image Extraction
