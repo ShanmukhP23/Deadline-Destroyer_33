@@ -152,6 +152,51 @@ export default function Dashboard() {
 
     const paceColors = aiCoach ? (PACE_COLORS[aiCoach.pace] || PACE_COLORS.steady) : PACE_COLORS.steady;
 
+    const seedDemoData = () => {
+        const now = new Date();
+        const yesterday = new Date(now); yesterday.setDate(now.getDate() - 1);
+        const twoDaysAgo = new Date(now); twoDaysAgo.setDate(now.getDate() - 2);
+        
+        const demoTopics = [
+            {
+                id: 'demo-1',
+                title: 'Binary Search Algorithm',
+                description: 'Binary search works on sorted arrays by repeatedly dividing the search interval in half.\n\nTime Complexity: O(log n)\nSpace Complexity: O(1) iterative, O(log n) recursive\n\nKey conditions: Array must be sorted. Compare target with middle element. Narrow search space each step.',
+                tags: ['DSA', 'Algorithms', 'Searching'],
+                createdDate: twoDaysAgo.toISOString(),
+                revisionCount: 4,
+                nextRevisionDate: now.toISOString(), // Due today
+                revisions: [twoDaysAgo.toISOString(), yesterday.toISOString()],
+                testScores: [{ score: 4, date: yesterday.toISOString() }]
+            },
+            {
+                id: 'demo-2',
+                title: 'Database Normalization',
+                description: 'Normalization is the process of organizing data to minimize redundancy.\n1NF: Atomic values, no repeating groups.\n2NF: 1NF + no partial dependency (all non-key attributes depend on whole primary key).\n3NF: 2NF + no transitive dependency (non-key attributes depend only on primary key).',
+                tags: ['Database', 'SQL', 'Theory'],
+                createdDate: yesterday.toISOString(),
+                revisionCount: 1,
+                nextRevisionDate: yesterday.toISOString(), // Overdue
+                revisions: [yesterday.toISOString()],
+                testScores: []
+            },
+            {
+                id: 'demo-3',
+                title: 'React `useEffect` Hook',
+                description: 'useEffect lets you synchronize a component with an external system.\n\nFires after layout and paint.\nCleanup function runs before the component is removed from UI or before the next effect runs.\nDependencies array dictates when it re-runs. Empty array [] = run once on mount.',
+                tags: ['React', 'Frontend', 'Hooks'],
+                createdDate: twoDaysAgo.toISOString(),
+                revisionCount: 5,
+                nextRevisionDate: new Date(now.getTime() + 86400000 * 5).toISOString(), // Due later
+                revisions: [twoDaysAgo.toISOString(), yesterday.toISOString(), now.toISOString()],
+                testScores: [{ score: 5, date: now.toISOString() }]
+            }
+        ];
+        
+        localStorage.setItem('recallx_topics', JSON.stringify(demoTopics));
+        window.location.reload();
+    };
+
     return (
         <>
             <SuccessAnimation
@@ -162,9 +207,18 @@ export default function Dashboard() {
             />
 
             <motion.div variants={container} initial="hidden" animate="show">
-                <motion.div variants={item} className="page-header">
-                    <h1>Dashboard</h1>
-                    <p>Welcome back! Here's your learning overview.</p>
+                <motion.div variants={item} className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div>
+                        <h1>Dashboard</h1>
+                        <p>Welcome back! Here's your learning overview.</p>
+                    </div>
+                    <div>
+                        {topics.length === 0 && (
+                            <button className="btn btn-primary" onClick={seedDemoData} style={{ background: '#3b82f6', border: 'none' }}>
+                                🪄 Prep Demo Data
+                            </button>
+                        )}
+                    </div>
                 </motion.div>
 
                 {/* Stats */}

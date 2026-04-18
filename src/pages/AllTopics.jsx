@@ -8,6 +8,7 @@ import {
     HiOutlineTrash,
 } from 'react-icons/hi';
 import { useTopics } from '../context/TopicContext';
+import { downloadICS, downloadAllICS } from '../utils/calendarService';
 import {
     getRetentionStatus,
     getRetentionLabel,
@@ -97,16 +98,42 @@ export default function AllTopics() {
             </motion.div>
 
             {/* Filters */}
-            <motion.div variants={item} className="filter-tabs">
-                {filters.map((f) => (
+            <motion.div variants={item} className="filter-tabs" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                    {filters.map((f) => (
+                        <button
+                            key={f.key}
+                            className={`filter-tab ${filter === f.key ? 'active' : ''}`}
+                            onClick={() => setFilter(f.key)}
+                        >
+                            {f.label} ({f.count})
+                        </button>
+                    ))}
+                </div>
+
+                {topics.length > 0 && (
                     <button
-                        key={f.key}
-                        className={`filter-tab ${filter === f.key ? 'active' : ''}`}
-                        onClick={() => setFilter(f.key)}
+                        onClick={() => {
+                            downloadAllICS(topics);
+                            alert('All upcoming schedules have been exported to your calendar!');
+                        }}
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            background: 'var(--primary-500)',
+                            color: 'white',
+                            padding: '8px 16px',
+                            borderRadius: 'var(--radius-md)',
+                            border: 'none',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            fontSize: '0.9rem'
+                        }}
                     >
-                        {f.label} ({f.count})
+                        <HiOutlineCalendar /> Export All to Calendar
                     </button>
-                ))}
+                )}
             </motion.div>
 
             {/* Topics Grid */}
@@ -162,7 +189,7 @@ export default function AllTopics() {
                                     }}
                                 />
 
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                                <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start', marginBottom: '8px', paddingRight: '60px' }}>
                                     <span className={`badge badge-${status}`}>
                                         {getRetentionLabel(status)}
                                     </span>
@@ -221,6 +248,27 @@ export default function AllTopics() {
                                         }}
                                     />
                                 </div>
+
+                                {/* Calendar button */}
+                                <button
+                                    className="btn btn-ghost btn-sm"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        downloadICS(topic);
+                                        alert('Calendar schedule downloaded! Open it to add to Apple Calendar, Outlook, or Google Calendar.');
+                                    }}
+                                    style={{
+                                        position: 'absolute',
+                                        top: '16px',
+                                        right: '48px',
+                                        padding: '4px 8px',
+                                        opacity: 0.5,
+                                        fontSize: '0.85rem',
+                                    }}
+                                    title="Sync schedule to Calendar"
+                                >
+                                    <HiOutlineCalendar />
+                                </button>
 
                                 {/* Delete button */}
                                 <button

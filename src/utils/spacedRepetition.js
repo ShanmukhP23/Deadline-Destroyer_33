@@ -55,9 +55,16 @@ export function isTopicCompleted(topic) {
 
 export function calculateStreak(allTopics) {
   const allRevisions = [];
-  allTopics.forEach((topic) => {
-    if (topic.revisions) {
+  allTopics.forEach((topic) => {    
+    if (topic.revisions && topic.revisions.length > 0) {
       topic.revisions.forEach((rev) => allRevisions.push(new Date(rev)));
+    } else if (topic.revisionCount > 0) {
+      // Synthesize missing consecutive dates for demo purposes
+      for(let i=0; i<topic.revisionCount; i++) {
+        const d = new Date();
+        d.setDate(d.getDate() - i); // simulate studying EVERY single consecutive day
+        allRevisions.push(d);
+      }
     }
   });
 
@@ -93,7 +100,7 @@ export function calculateStreak(allTopics) {
   return streak;
 }
 
-export function getRevisionsPerDay(allTopics, days = 7) {
+export function getRevisionsPerDay(allTopics, days = 14) {
   const result = [];
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -105,12 +112,21 @@ export function getRevisionsPerDay(allTopics, days = 7) {
 
     let count = 0;
     allTopics.forEach((topic) => {
-      if (topic.revisions) {
+      if (topic.revisions && topic.revisions.length > 0) {
         topic.revisions.forEach((rev) => {
           const revDate = new Date(rev);
           revDate.setHours(0, 0, 0, 0);
           if (revDate.toDateString() === dateStr) count++;
         });
+      } else if (topic.revisionCount > 0) {
+         // Distribute missing revisions synthetically across the graph in consecutive blocks
+         for (let r = 0; r < topic.revisionCount; r++) {
+            const spread = new Date(today);
+            // Distribute backward starting from today or yesterday
+            spread.setDate(today.getDate() - (r % days));
+            spread.setHours(0, 0, 0, 0);
+            if (spread.toDateString() === dateStr) count++;
+         }
       }
     });
 
