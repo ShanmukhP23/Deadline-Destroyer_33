@@ -77,7 +77,14 @@ export default function FlashcardMode({ topics, onClose }) {
                         <span style={{ fontSize: '0.8rem', color: 'var(--success-400)', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                             Answer
                         </span>
-                        <p style={{ fontSize: '1.05rem', lineHeight: 1.7, color: 'var(--text-primary)' }}>
+                        <p style={{
+                            fontSize: '1.05rem',
+                            lineHeight: 1.7,
+                            color: 'var(--text-primary)',
+                            whiteSpace: 'pre-wrap',
+                            textAlign: 'left',
+                            width: '100%'
+                        }}>
                             {currentTopic.description}
                         </p>
                     </div>

@@ -2,6 +2,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { TopicProvider } from './context/TopicContext';
 import Sidebar from './components/Sidebar';
+import MobileNav from './components/MobileNav';
+import MobileHeader from './components/MobileHeader';
 import Dashboard from './pages/Dashboard';
 import AddTopic from './pages/AddTopic';
 import AllTopics from './pages/AllTopics';
@@ -51,6 +53,7 @@ function ProtectedApp() {
             <div className="app-layout">
                 <Sidebar />
                 <main className="main-content">
+                    <MobileHeader />
                     <Routes>
                         <Route path="/" element={<Dashboard />} />
                         <Route path="/add" element={<AddTopic />} />
@@ -60,6 +63,7 @@ function ProtectedApp() {
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
                 </main>
+                <MobileNav />
             </div>
         </TopicProvider>
     );

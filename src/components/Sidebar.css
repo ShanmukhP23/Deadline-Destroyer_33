@@ -153,19 +153,7 @@
 }
 
 @media (max-width: 768px) {
-    .mobile-menu-toggle {
-        display: flex;
+    .mobile-menu-toggle, .sidebar, .sidebar-overlay {
+        display: none !important;
     }
-
-    .sidebar {
-        transform: translateX(-100%);
-    }
-
-    .sidebar.sidebar-open {
-        transform: translateX(0);
-    }
-
-    .sidebar-overlay {
-        display: block;
-    }
-}
+}
